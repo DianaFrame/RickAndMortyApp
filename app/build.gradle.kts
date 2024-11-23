@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.rickandmortyapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.rickandmortyapp"
@@ -50,7 +50,8 @@ android {
 }
 
 dependencies {
-
+    implementation(project(path = ":domain"))
+    implementation(project(path = ":data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
