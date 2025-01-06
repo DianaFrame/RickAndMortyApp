@@ -6,7 +6,7 @@ import com.example.rickandmortyapp.navigation.Screen
 
 @Composable
 fun DetailsCharacterScreen(
-    onNavigateTo: (Screen) -> Unit
+    onNavigateTo: (Screen) -> Unit = {}
 ) {
 
 }

@@ -15,7 +15,7 @@ import com.example.rickandmortyapp.navigation.Screen
 
 @Composable
 fun LoadingScreen(
-    onNavigateTo: (Screen) -> Unit
+    onNavigateTo: (Screen) -> Unit = {}
 ){
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.Asset("load_morty_flex.json")

@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.rickandmortyapp.screens.CharactersListScreen
+import com.example.rickandmortyapp.screens.CharacterListScreen
 import com.example.rickandmortyapp.screens.DetailsCharacterScreen
 import com.example.rickandmortyapp.screens.LoadingScreen
 import kotlinx.serialization.Serializable
@@ -39,9 +39,9 @@ fun MainNavigation(
             }
         }
         composable<Screen.CharacterList> {
-            CharactersListScreen { navigateTo ->
+            CharacterListScreen (onNavigateTo = { navigateTo ->
                 navHostController.navigate(navigateTo)
-            }
+            })
         }
         composable<Screen.DetailsCharacter> {
             DetailsCharacterScreen { navigateTo ->
