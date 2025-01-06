@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -52,6 +54,11 @@ android {
 dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":data"))
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization)
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.lottie)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -4,13 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.rickandmortyapp.navigation.MainNavigation
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,8 +16,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RickAndMortyAppTheme {
-
+                MainContent()
             }
         }
     }
+}
+
+@Composable
+fun MainContent(
+    modifier: Modifier = Modifier
+) {
+    MainNavigation(
+        navHostController = rememberNavController(),
+        modifier = modifier
+    )
 }
