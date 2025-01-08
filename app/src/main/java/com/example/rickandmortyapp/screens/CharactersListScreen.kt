@@ -19,19 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.domain.models.CharacterListItem
-import com.example.rickandmortyapp.event.CharacterListEvent
+import com.example.rickandmortyapp.event.Event
 import com.example.rickandmortyapp.navigation.Screen
-import com.example.rickandmortyapp.state.CharacterListScreenState
-import com.example.rickandmortyapp.viewmodel.CharacterListViewModel
+import com.example.rickandmortyapp.state.State
+import com.example.rickandmortyapp.viewmodel.MainViewModel
 
 @Composable
 fun CharacterListScreen(
-    onNavigateTo: (Screen) -> Unit
-){
-    val viewModel = viewModel<CharacterListViewModel>()
+    onNavigateTo: (Screen) -> Unit,
+    viewModel: MainViewModel
+) {
     CharactersListView(
         state = viewModel.state,
         onNavigateTo = onNavigateTo,
@@ -44,36 +43,15 @@ fun CharacterListScreen(
 @Composable
 fun CharactersListView(
     onNavigateTo: (Screen) -> Unit = {},
-    state: CharacterListScreenState = CharacterListScreenState(),
-    onEvent: (CharacterListEvent)->Unit = {},
+    state: State = State(),
+    onEvent: (Event) -> Unit = {},
 ) {
-    val characters = listOf(
-        CharacterListItem(
-            1,
-            "Morty",
-            "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterListItem(
-            2,
-            "Morty",
-            "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterListItem(
-            3,
-            "Morty",
-            "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        ),
-        CharacterListItem(
-            4,
-            "Morty",
-            "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
-        )
-    )
+    val characters = state.characterList?.results
     Column {
         OutlinedTextField(
             value = state.query,
             onValueChange = {
-                onEvent(CharacterListEvent.UpdateQuery(it))
+                onEvent(Event.UpdateQuery(it))
             },
             leadingIcon = {
                 Icon(
@@ -89,7 +67,7 @@ fun CharactersListView(
             }
         )
         LazyVerticalGrid(GridCells.Fixed(3), modifier = Modifier.fillMaxSize()) {
-            items(characters) { character ->
+            items(characters ?: emptyList()) { character ->
                 ListItem(character)
             }
         }

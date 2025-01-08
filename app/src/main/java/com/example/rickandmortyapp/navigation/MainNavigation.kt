@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.rickandmortyapp.screens.CharacterListScreen
 import com.example.rickandmortyapp.screens.DetailsCharacterScreen
 import com.example.rickandmortyapp.screens.LoadingScreen
+import com.example.rickandmortyapp.viewmodel.MainViewModel
 import kotlinx.serialization.Serializable
 
 sealed interface Screen {
@@ -26,7 +27,8 @@ sealed interface Screen {
 @Composable
 fun MainNavigation(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    viewModel: MainViewModel,
 ) {
     NavHost(
         modifier = Modifier,
@@ -34,19 +36,19 @@ fun MainNavigation(
         startDestination = Screen.Loading
     ) {
         composable<Screen.Loading> {
-            LoadingScreen { navigateTo ->
+            LoadingScreen(onNavigateTo = { navigateTo ->
                 navHostController.navigate(navigateTo)
-            }
+            }, viewModel = viewModel)
         }
         composable<Screen.CharacterList> {
-            CharacterListScreen (onNavigateTo = { navigateTo ->
+            CharacterListScreen(onNavigateTo = { navigateTo ->
                 navHostController.navigate(navigateTo)
-            })
+            }, viewModel = viewModel)
         }
         composable<Screen.DetailsCharacter> {
-            DetailsCharacterScreen { navigateTo ->
+            DetailsCharacterScreen(onNavigateTo = { navigateTo ->
                 navHostController.navigate(navigateTo)
-            }
+            }, viewModel = viewModel)
         }
     }
 }
