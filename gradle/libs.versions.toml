@@ -18,6 +18,9 @@ lottie = "6.6.0"
 kotlinSerialization = "1.7.1"
 navigation = "2.8.5"
 kotlinCompose = "2.0.0"
+hilt = "2.50"
+ksp = "2.0.0-1.0.21"
+hiltNavigation = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,8 +48,9 @@ logging-interceptor = {group = "com.squareup.okhttp3", name = "logging-intercept
 lottie = {group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie"}
 kotlinx-serialization = {module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization"}
 androidx-navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref = "navigation"}
-
-
+hilt-android = {module = "com.google.dagger:hilt-android", version.ref = "hilt"}
+hilt-android-compiler = {module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt"}
+hilt-navigation-compose = {module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation"}
 
 
 [plugins]
@@ -55,3 +59,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 compose = {id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinCompose"}
+ksp = {id = "com.google.devtools.ksp", version.ref = "ksp"}
+hilt = {id = "com.google.dagger.hilt.android", version.ref = "hilt"}

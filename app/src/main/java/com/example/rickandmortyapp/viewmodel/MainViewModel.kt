@@ -5,20 +5,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.CharactersRepositoryImpl
 import com.example.domain.usecases.GetCharacterDetailsUseCase
 import com.example.domain.usecases.GetCharacterListUseCase
 import com.example.domain.usecases.GetSearchCharacterListUseCase
 import com.example.rickandmortyapp.event.Event
 import com.example.rickandmortyapp.state.State
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    private val repository = CharactersRepositoryImpl()
-    private val getCharacterListUseCase = GetCharacterListUseCase(repository)
-    private val getSearchCharacterListUseCase = GetSearchCharacterListUseCase(repository)
-    private val getCharacterDetailsUseCase = GetCharacterDetailsUseCase(repository)
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val getCharacterListUseCase: GetCharacterListUseCase,
+    private val getSearchCharacterListUseCase: GetSearchCharacterListUseCase,
+    private val getCharacterDetailsUseCase: GetCharacterDetailsUseCase,
+) : ViewModel() {
     var state by mutableStateOf(State())
         private set
 
