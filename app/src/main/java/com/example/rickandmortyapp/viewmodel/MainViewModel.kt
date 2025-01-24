@@ -23,17 +23,14 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(State())
         private set
+    init {
+        getCharacters()
+    }
 
     fun onEvent(event: Event) {
         when (event) {
             is Event.UpdateQuery -> {
                 this.state = state.copy(query = event.newQuery)
-            }
-
-
-            is Event.GetCharacterList -> {
-                this.state = state.copy(isLoading = true)
-                getCharacters()
             }
 
             is Event.SearchCharacterByName -> {

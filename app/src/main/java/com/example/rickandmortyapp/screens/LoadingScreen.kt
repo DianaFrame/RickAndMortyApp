@@ -25,14 +25,12 @@ fun LoadingScreen(
     LoadingView(
         state = viewModel.state,
         onNavigateTo = onNavigateTo,
-        onEvent = viewModel::onEvent
     )
 }
 @Composable
 fun LoadingView(
     onNavigateTo: (Screen) -> Unit = {},
     state: State = State(),
-    onEvent: (Event) -> Unit = {},
 ){
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.Asset("load_morty_flex.json")
@@ -49,9 +47,6 @@ fun LoadingView(
     LaunchedEffect(state.isLoading) {
         if(!state.isLoading){
             onNavigateTo(Screen.CharacterList)
-        }
-        else {
-            onEvent(Event.GetCharacterList)
         }
     }
 }
