@@ -30,29 +30,24 @@ class MainViewModel @Inject constructor(
                 this.state = state.copy(query = event.newQuery)
             }
 
+
             is Event.GetCharacterList -> {
+                this.state = state.copy(isLoading = true)
                 getCharacters()
             }
 
             is Event.SearchCharacterByName -> {
+                this.state = state.copy(isLoading = true)
                 if (event.name != "") {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        val characters = getSearchCharacterListUseCase.execute(name = state.query)
-                        this@MainViewModel.state =
-                            state.copy(characterList = characters, isLoading = false)
-                    }
+                    getSearchCharacters()
                 }
 
             }
 
             is Event.GetDetailsById -> {
-                if (state.selectCharacterId != null) {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        val details = getCharacterDetailsUseCase.execute(state.selectCharacterId!!)
-                        this@MainViewModel.state =
-                            state.copy(characterDetails = details, isLoading = false)
-                    }
-                }
+                this.state = state.copy(isLoading = true)
+                getDetailsById(event.id)
+
             }
 
 
@@ -65,4 +60,17 @@ class MainViewModel @Inject constructor(
         val characters = getCharacterListUseCase.execute()
         this@MainViewModel.state = state.copy(characterList = characters, isLoading = false)
     }
+
+    private fun getSearchCharacters() = viewModelScope.launch(Dispatchers.IO) {
+        val characters = getSearchCharacterListUseCase.execute(name = state.query)
+        this@MainViewModel.state =
+            state.copy(characterList = characters, isLoading = false)
+    }
+
+    private fun getDetailsById(id: Int) = viewModelScope.launch(Dispatchers.IO) {
+        val details = getCharacterDetailsUseCase.execute(id)
+        this@MainViewModel.state =
+            state.copy(characterDetails = details, isLoading = false)
+    }
+
 }

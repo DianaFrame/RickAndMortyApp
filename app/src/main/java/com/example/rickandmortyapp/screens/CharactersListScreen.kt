@@ -1,5 +1,6 @@
 package com.example.rickandmortyapp.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -46,12 +49,14 @@ fun CharactersListView(
     state: State = State(),
     onEvent: (Event) -> Unit = {},
 ) {
-    val characters = state.characterList?.results
+    var characters = state.characterList?.results
     Column {
         OutlinedTextField(
             value = state.query,
-            onValueChange = {
-                onEvent(Event.UpdateQuery(it))
+            onValueChange = { query ->
+                onEvent(Event.UpdateQuery(query))
+                onEvent(Event.SearchCharacterByName(query))
+                characters = state.characterList?.results
             },
             leadingIcon = {
                 Icon(
@@ -68,32 +73,46 @@ fun CharactersListView(
         )
         LazyVerticalGrid(GridCells.Fixed(3), modifier = Modifier.fillMaxSize()) {
             items(characters ?: emptyList()) { character ->
-                ListItem(character)
+                ListItem(character, onEvent) {
+                    onNavigateTo(Screen.DetailsCharacter)
+                }
             }
         }
     }
+
+
 }
 
 @Composable
-fun ListItem(characterListItem: CharacterListItem) {
+fun ListItem(
+    characterListItem: CharacterListItem,
+    onEvent: (Event) -> Unit,
+    onClick: () -> Unit,
+) {
     Card(
         Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .clickable {
+                onEvent(Event.GetDetailsById(characterListItem.id))
+                onClick()
+            }
 
     ) {
         Column(
             Modifier
-                .padding(top = 8.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AsyncImage(
                 model = characterListItem.image,
-                contentDescription = "character image"
+                contentDescription = "character image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
             )
             Text(
                 text = characterListItem.name,
+                textAlign = TextAlign.Center
             )
         }
 

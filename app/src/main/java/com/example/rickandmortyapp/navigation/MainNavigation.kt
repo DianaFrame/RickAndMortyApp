@@ -46,9 +46,7 @@ fun MainNavigation(
             }, viewModel = viewModel)
         }
         composable<Screen.DetailsCharacter> {
-            DetailsCharacterScreen(onNavigateTo = { navigateTo ->
-                navHostController.navigate(navigateTo)
-            }, viewModel = viewModel)
+            DetailsCharacterScreen(viewModel = viewModel)
         }
     }
 }
