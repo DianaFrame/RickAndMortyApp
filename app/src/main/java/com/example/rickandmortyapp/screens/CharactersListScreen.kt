@@ -15,12 +15,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.domain.models.CharacterListItem
@@ -37,26 +39,26 @@ fun CharacterListScreen(
     CharactersListView(
         state = viewModel.state,
         onNavigateTo = onNavigateTo,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        viewModel = viewModel
     )
 }
 
 
-@Preview(showSystemUi = true)
 @Composable
 fun CharactersListView(
     onNavigateTo: (Screen) -> Unit = {},
     state: State = State(),
     onEvent: (Event) -> Unit = {},
+    viewModel: MainViewModel
 ) {
-    var characters = state.characterList?.results
+    val characters by viewModel.characters.collectAsState()
     Column {
         OutlinedTextField(
             value = state.query,
             onValueChange = { query ->
                 onEvent(Event.UpdateQuery(query))
                 onEvent(Event.SearchCharacterByName(query))
-                characters = state.characterList?.results
             },
             leadingIcon = {
                 Icon(
@@ -72,9 +74,14 @@ fun CharactersListView(
             }
         )
         LazyVerticalGrid(GridCells.Fixed(3), modifier = Modifier.fillMaxSize()) {
-            items(characters ?: emptyList()) { character ->
+            items(characters) { character ->
                 ListItem(character, onEvent) {
                     onNavigateTo(Screen.DetailsCharacter)
+                }
+            }
+            item {
+                LaunchedEffect(Unit) {
+                    viewModel.loadNextPage()
                 }
             }
         }

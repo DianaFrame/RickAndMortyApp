@@ -5,7 +5,7 @@ import com.example.domain.models.CharacterList
 
 interface CharactersRepository {
 
-    suspend fun getList(): CharacterList?
+    suspend fun getList(page: Int): CharacterList?
 
     suspend fun getDetailsById(id: Int): CharacterDetails?
 

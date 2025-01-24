@@ -14,9 +14,9 @@ class CharactersRepositoryImpl : CharactersRepository {
         Retrofit.getClient().create(CharactersApi::class.java)
     }
 
-    override suspend fun getList(): CharacterList? {
+    override suspend fun getList(page: Int): CharacterList? {
         return api
-            .getAllCharacters()
+            .getAllCharacters(page)
             .body()
             ?.toCharacterList()
     }
