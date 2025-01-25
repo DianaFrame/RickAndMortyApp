@@ -1,34 +1,43 @@
 package com.example.rickandmortyapp.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import coil3.compose.AsyncImage
 import com.example.domain.models.CharacterListItem
 import com.example.rickandmortyapp.event.Event
 import com.example.rickandmortyapp.navigation.Screen
 import com.example.rickandmortyapp.state.State
+import com.example.rickandmortyapp.ui.theme.Gray80
+import com.example.rickandmortyapp.ui.theme.Red80
+import com.example.rickandmortyapp.ui.theme.White60
 import com.example.rickandmortyapp.viewmodel.MainViewModel
 
 @Composable
@@ -65,6 +74,16 @@ fun CharactersListView(
                     painter = rememberVectorPainter(image = Icons.Outlined.Search),
                     contentDescription = "search"
                 )
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favorite"
+                    )
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,21 +125,52 @@ fun ListItem(
             }
 
     ) {
-        Column(
+        ConstraintLayout(
             Modifier
                 .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            val (image, name, favouriteButton) = createRefs()
             AsyncImage(
                 model = characterListItem.image,
                 contentDescription = "character image",
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .constrainAs(image) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
                 contentScale = ContentScale.Crop,
             )
             Text(
                 text = characterListItem.name,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.constrainAs(name) {
+                    top.linkTo(image.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
             )
+            IconButton(
+                onClick = {
+
+                },
+                modifier = Modifier.constrainAs(favouriteButton) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "favourite",
+                    tint = if (characterListItem.isFav) Red80 else Gray80,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(White60)
+                        .padding(3.dp)
+                )
+            }
         }
 
     }

@@ -7,9 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.CharacterListItem
+import com.example.domain.usecases.DeleteFavouriteUseCase
 import com.example.domain.usecases.GetCharacterDetailsUseCase
 import com.example.domain.usecases.GetCharacterListUseCase
+import com.example.domain.usecases.GetFavouriteUseCase
 import com.example.domain.usecases.GetSearchCharacterListUseCase
+import com.example.domain.usecases.InsertFavouriteUseCase
 import com.example.rickandmortyapp.event.Event
 import com.example.rickandmortyapp.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +27,9 @@ class MainViewModel @Inject constructor(
     private val getCharacterListUseCase: GetCharacterListUseCase,
     private val getSearchCharacterListUseCase: GetSearchCharacterListUseCase,
     private val getCharacterDetailsUseCase: GetCharacterDetailsUseCase,
+    private val getFavouriteUseCase: GetFavouriteUseCase,
+    private val insertFavouriteUseCase: InsertFavouriteUseCase,
+    private val deleteFavouriteUseCase: DeleteFavouriteUseCase
 ) : ViewModel() {
     var state by mutableStateOf(State())
         private set
@@ -56,6 +62,14 @@ class MainViewModel @Inject constructor(
 
             }
 
+            is Event.InsertFavourite -> {
+                insertFavourite(event.characterListItem)
+            }
+
+            is Event.DeleteFavourite -> {
+                deleteFavourite(event.characterListItem)
+            }
+
 
         }
 
@@ -73,6 +87,27 @@ class MainViewModel @Inject constructor(
         val details = getCharacterDetailsUseCase.execute(id)
         this@MainViewModel.state =
             state.copy(characterDetails = details, isLoading = false)
+    }
+
+    fun getFavouriteList() = viewModelScope.launch {
+        try {
+            this@MainViewModel.state = state.copy(isLoading = true)
+            val favourites = getFavouriteUseCase.execute()
+            _characters.value = favourites?.results.orEmpty()
+        } catch (e: Exception) {
+            Log.e("MyLog", "error")
+        } finally {
+            this@MainViewModel.state = state.copy(isLoading = false)
+        }
+
+    }
+
+    private fun insertFavourite(characterListItem: CharacterListItem) = viewModelScope.launch {
+        insertFavouriteUseCase.execute(characterListItem)
+    }
+
+    private fun deleteFavourite(characterListItem: CharacterListItem) = viewModelScope.launch {
+        deleteFavouriteUseCase.execute(characterListItem)
     }
 
     fun loadNextPage() {
