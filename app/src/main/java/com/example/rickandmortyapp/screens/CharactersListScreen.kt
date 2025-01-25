@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -100,11 +99,11 @@ fun CharactersListView(
                     onNavigateTo(Screen.DetailsCharacter)
                 }
             }
-            item {
-                LaunchedEffect(Unit) {
-                    viewModel.loadNextPage()
-                }
-            }
+//            item {
+//                LaunchedEffect(Unit) {
+//                    viewModel.loadNextPage()
+//                }
+//            }
         }
     }
 
@@ -155,9 +154,11 @@ fun ListItem(
             )
             IconButton(
                 onClick = {
-                    onEvent(Event.InsertFavourite(
-                        characterListItem.copy(isFav = true)
-                    ))
+                    onEvent(
+                        Event.InsertFavourite(
+                            characterListItem.copy(isFav = !characterListItem.isFav)
+                        )
+                    )
                 },
                 modifier = Modifier.constrainAs(favouriteButton) {
                     top.linkTo(parent.top)

@@ -9,6 +9,8 @@ import com.example.domain.CharactersRepository
 import com.example.domain.models.CharacterDetails
 import com.example.domain.models.CharacterList
 import com.example.domain.models.CharacterListItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CharactersRepositoryImpl @Inject constructor(
@@ -35,16 +37,16 @@ class CharactersRepositoryImpl @Inject constructor(
             ?.toCharacterDetails()
     }
 
-    override suspend fun getSearchListByName(name: String): CharacterList {
-        return mainDb.dao.searchCharactersByName(query = name).toCharacterList()
+    override suspend fun getSearchListByName(name: String): Flow<List<CharacterListItem>> {
+        return mainDb.dao.searchCharactersByName(query = name).map { it.toListCharacterListItem() }
     }
 
-    override suspend fun getList(): CharacterList {
-        return mainDb.dao.getAllCharacters().toCharacterList()
+    override suspend fun getList(): Flow<List<CharacterListItem>> {
+        return mainDb.dao.getAllCharacters().map { it.toListCharacterListItem() }
     }
 
-    override suspend fun getFavourites(): CharacterList {
-        return mainDb.dao.getFavouriteCharacters().toCharacterList()
+    override suspend fun getFavourites(): Flow<List<CharacterListItem>> {
+        return mainDb.dao.getFavouriteCharacters().map { it.toListCharacterListItem() }
     }
 
     override suspend fun insertFavorite(characterListItem: CharacterListItem) {
@@ -88,10 +90,12 @@ class CharactersRepositoryImpl @Inject constructor(
         )
     }
 
-    private fun List<Character>.toCharacterList(): CharacterList {
-        return CharacterList(
-            results = this.map { it.toCharacterListItem() }
-        )
+    private fun List<Character>.toListCharacterListItem(): List<CharacterListItem> {
+        val list = mutableListOf<CharacterListItem>()
+        this.forEach {
+            list.add(it.toCharacterListItem())
+        }
+        return list
     }
 
 }

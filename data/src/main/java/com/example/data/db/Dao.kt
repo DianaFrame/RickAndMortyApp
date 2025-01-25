@@ -18,11 +18,11 @@ interface Dao {
     suspend fun deleteCharacter(character: Character)
 
     @Query("SELECT * FROM characters WHERE isFav = 1")
-    suspend fun getFavouriteCharacters(): List<Character>
+    fun getFavouriteCharacters(): Flow<List<Character>>
 
     @Query("SELECT * FROM characters")
-    suspend fun getAllCharacters(): List<Character>
+    fun getAllCharacters(): Flow<List<Character>>
 
     @Query("SELECT * FROM characters WHERE name LIKE '%' || :query || '%'")
-    suspend fun searchCharactersByName(query: String): List<Character>
+    fun searchCharactersByName(query: String): Flow<List<Character>>
 }

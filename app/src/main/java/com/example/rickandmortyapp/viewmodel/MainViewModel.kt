@@ -10,14 +10,15 @@ import com.example.domain.models.CharacterListItem
 import com.example.domain.usecases.DeleteFavouriteUseCase
 import com.example.domain.usecases.GetAllCharactersUseCase
 import com.example.domain.usecases.GetCharacterDetailsUseCase
-import com.example.domain.usecases.InsertCharactersIntoDbUseCase
 import com.example.domain.usecases.GetFavouriteUseCase
 import com.example.domain.usecases.GetSearchCharacterListUseCase
+import com.example.domain.usecases.InsertCharactersIntoDbUseCase
 import com.example.domain.usecases.InsertFavouriteUseCase
 import com.example.rickandmortyapp.event.Event
 import com.example.rickandmortyapp.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,17 +32,25 @@ class MainViewModel @Inject constructor(
     private val getFavouriteUseCase: GetFavouriteUseCase,
     private val insertFavouriteUseCase: InsertFavouriteUseCase,
     private val deleteFavouriteUseCase: DeleteFavouriteUseCase,
-    private val getAllCharactersUseCase: GetAllCharactersUseCase
+    private val getAllCharactersUseCase: GetAllCharactersUseCase,
 ) : ViewModel() {
     var state by mutableStateOf(State())
         private set
     private var currentPage = 1
     private val _characters = MutableStateFlow<List<CharacterListItem>>(emptyList())
     val characters: StateFlow<List<CharacterListItem>> get() = _characters
+    private var job: Job? = null
 
 
     init {
-        loadNextPage()
+        getAllCharacters()
+        if (characters.value.isEmpty()) {
+            viewModelScope.launch {
+                insertCharactersIntoDbUseCase.execute(currentPage)
+                getAllCharacters()
+            }
+        }
+
     }
 
     fun onEvent(event: Event) {
@@ -82,11 +91,16 @@ class MainViewModel @Inject constructor(
 
     }
 
-    private fun getSearchCharacters() = viewModelScope.launch(Dispatchers.IO) {
-        val characters = getSearchCharacterListUseCase.execute(name = state.query)
-        this@MainViewModel.state =
-            state.copy(isLoading = false)
-        this@MainViewModel._characters.value = characters?.results.orEmpty()
+    private fun getSearchCharacters() {
+        job?.cancel()
+        job = viewModelScope.launch(Dispatchers.IO) {
+            getSearchCharacterListUseCase.execute(name = state.query).collect { list ->
+                this@MainViewModel._characters.value = list
+                this@MainViewModel.state =
+                    state.copy(isLoading = false)
+            }
+
+        }
     }
 
     private fun getDetailsById(id: Int) = viewModelScope.launch(Dispatchers.IO) {
@@ -95,42 +109,65 @@ class MainViewModel @Inject constructor(
             state.copy(characterDetails = details, isLoading = false)
     }
 
-    fun getFavouriteList() = viewModelScope.launch {
-        try {
-            this@MainViewModel.state = state.copy(isLoading = true)
-            val favourites = getFavouriteUseCase.execute()
-            _characters.value = favourites?.results.orEmpty()
-        } catch (e: Exception) {
-            Log.e("MyLog", "error")
-        } finally {
-            this@MainViewModel.state = state.copy(isLoading = false)
-        }
-
-    }
-
-    private fun insertFavourite(characterListItem: CharacterListItem) = viewModelScope.launch {
-        insertFavouriteUseCase.execute(characterListItem)
-    }
-
-    private fun deleteFavourite(characterListItem: CharacterListItem) = viewModelScope.launch {
-        deleteFavouriteUseCase.execute(characterListItem)
-    }
-
-    fun loadNextPage() {
-        viewModelScope.launch {
+    private fun getFavouriteList() {
+        job?.cancel()
+        job = viewModelScope.launch(Dispatchers.IO) {
             try {
                 this@MainViewModel.state = state.copy(isLoading = true)
-                insertCharactersIntoDbUseCase.execute(currentPage)
-                this@MainViewModel.state = state.copy(isLoading = false)
-                val newCharacters = getAllCharactersUseCase.execute()
-                Log.i("MyLog1", newCharacters.toString())
-                _characters.value = newCharacters?.results.orEmpty()
-                currentPage++
+                getFavouriteUseCase.execute().collect { list ->
+                    _characters.value = list
+                }
+
             } catch (e: Exception) {
                 Log.e("MyLog", "error")
             } finally {
                 this@MainViewModel.state = state.copy(isLoading = false)
             }
+        }
+
+    }
+
+    private fun insertFavourite(characterListItem: CharacterListItem) =
+        viewModelScope.launch(Dispatchers.IO) {
+            insertFavouriteUseCase.execute(characterListItem)
+        }
+
+    private fun deleteFavourite(characterListItem: CharacterListItem) =
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteFavouriteUseCase.execute(characterListItem)
+        }
+
+//    fun loadNextPage() {
+//        job?.cancel()
+//        job = viewModelScope.launch {
+//            try {
+//                this@MainViewModel.state = state.copy(isLoading = true)
+//                insertCharactersIntoDbUseCase.execute(currentPage)
+//                val newCharacters = getAllCharactersUseCase.execute()
+//                newCharacters.collect { list ->
+//                    _characters.value = list
+//                    this@MainViewModel.state = state.copy(isLoading = false)
+//                }
+//                currentPage++
+//
+//            } catch (e: Exception) {
+//                Log.e("MyLog", "error")
+//            } finally {
+//                this@MainViewModel.state = state.copy(isLoading = false)
+//            }
+//
+//        }
+//    }
+
+    private fun getAllCharacters() {
+        job?.cancel()
+        job = viewModelScope.launch(Dispatchers.IO) {
+            this@MainViewModel.state = state.copy(isLoading = true)
+            getAllCharactersUseCase.execute().collect { list ->
+                _characters.value = list
+                this@MainViewModel.state = state.copy(isLoading = false)
+            }
+
 
         }
     }
