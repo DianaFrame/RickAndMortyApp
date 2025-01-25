@@ -16,7 +16,4 @@ interface CharactersApi {
     @GET("character/{id}")
     suspend fun getDetailsById(@Path("id") id: Int): Response<Details>
 
-    @GET("character")
-    suspend fun searchByName(@Query("name") name: String): Response<Characters>
-
 }

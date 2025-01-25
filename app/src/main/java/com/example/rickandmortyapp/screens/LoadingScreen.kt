@@ -11,7 +11,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.rickandmortyapp.event.Event
 import com.example.rickandmortyapp.navigation.Screen
 import com.example.rickandmortyapp.state.State
 import com.example.rickandmortyapp.viewmodel.MainViewModel

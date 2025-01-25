@@ -2,12 +2,12 @@ package com.example.rickandmortyapp.di
 
 import com.example.domain.CharactersRepository
 import com.example.domain.usecases.DeleteFavouriteUseCase
+import com.example.domain.usecases.GetAllCharactersUseCase
 import com.example.domain.usecases.GetCharacterDetailsUseCase
-import com.example.domain.usecases.GetCharacterListUseCase
+import com.example.domain.usecases.InsertCharactersIntoDbUseCase
 import com.example.domain.usecases.GetFavouriteUseCase
 import com.example.domain.usecases.GetSearchCharacterListUseCase
 import com.example.domain.usecases.InsertFavouriteUseCase
-import com.example.rickandmortyapp.event.Event
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +17,8 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 object DomainModule {
     @Provides
-    fun provideGetCharacterListUseCase(repository: CharactersRepository): GetCharacterListUseCase {
-        return GetCharacterListUseCase(repository = repository)
+    fun provideInsertCharactersIntoDbUseCase(repository: CharactersRepository): InsertCharactersIntoDbUseCase {
+        return InsertCharactersIntoDbUseCase(repository = repository)
     }
 
     @Provides
@@ -32,7 +32,7 @@ object DomainModule {
     }
 
     @Provides
-    fun provideGetFavouriteUseCase(repository: CharactersRepository): GetFavouriteUseCase{
+    fun provideGetFavouriteUseCase(repository: CharactersRepository): GetFavouriteUseCase {
         return GetFavouriteUseCase(repository = repository)
     }
 
@@ -42,7 +42,13 @@ object DomainModule {
     }
 
     @Provides
-    fun providesDeleteFavouriteUseCase(repository: CharactersRepository) : DeleteFavouriteUseCase{
+    fun providesDeleteFavouriteUseCase(repository: CharactersRepository): DeleteFavouriteUseCase {
         return DeleteFavouriteUseCase(repository = repository)
     }
+
+    @Provides
+    fun providesGetAllCharactersUseCase(repository: CharactersRepository): GetAllCharactersUseCase {
+        return GetAllCharactersUseCase(repository = repository)
+    }
+
 }

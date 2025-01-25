@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.data.models.Character
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -18,4 +19,10 @@ interface Dao {
 
     @Query("SELECT * FROM characters WHERE isFav = 1")
     suspend fun getFavouriteCharacters(): List<Character>
+
+    @Query("SELECT * FROM characters")
+    suspend fun getAllCharacters(): List<Character>
+
+    @Query("SELECT * FROM characters WHERE name LIKE '%' || :query || '%'")
+    suspend fun searchCharactersByName(query: String): List<Character>
 }

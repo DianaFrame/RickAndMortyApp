@@ -6,11 +6,13 @@ import com.example.domain.models.CharacterListItem
 
 interface CharactersRepository {
 
-    suspend fun getList(page: Int): CharacterList?
+    suspend fun insertListIntoDb(page: Int)
 
     suspend fun getDetailsById(id: Int): CharacterDetails?
 
     suspend fun getSearchListByName(name: String): CharacterList?
+
+    suspend fun getList(): CharacterList?
 
     suspend fun getFavourites(): CharacterList?
 

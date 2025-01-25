@@ -77,7 +77,9 @@ fun CharactersListView(
             },
             trailingIcon = {
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        onEvent(Event.GetFavouriteCharacters)
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
@@ -153,7 +155,9 @@ fun ListItem(
             )
             IconButton(
                 onClick = {
-
+                    onEvent(Event.InsertFavourite(
+                        characterListItem.copy(isFav = true)
+                    ))
                 },
                 modifier = Modifier.constrainAs(favouriteButton) {
                     top.linkTo(parent.top)

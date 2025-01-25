@@ -18,11 +18,14 @@ class CharactersRepositoryImpl @Inject constructor(
         Retrofit.getClient().create(CharactersApi::class.java)
     }
 
-    override suspend fun getList(page: Int): CharacterList? {
-        return api
+    override suspend fun insertListIntoDb(page: Int) {
+        val characters = api
             .getAllCharacters(page)
             .body()
             ?.toCharacterList()
+        characters?.results?.forEach { character ->
+            mainDb.dao.insertCharacter(character.toCharacter())
+        }
     }
 
     override suspend fun getDetailsById(id: Int): CharacterDetails? {
@@ -32,15 +35,16 @@ class CharactersRepositoryImpl @Inject constructor(
             ?.toCharacterDetails()
     }
 
-    override suspend fun getSearchListByName(name: String): CharacterList? {
-        return api
-            .searchByName(name = name)
-            .body()
-            ?.toCharacterList()
+    override suspend fun getSearchListByName(name: String): CharacterList {
+        return mainDb.dao.searchCharactersByName(query = name).toCharacterList()
+    }
+
+    override suspend fun getList(): CharacterList {
+        return mainDb.dao.getAllCharacters().toCharacterList()
     }
 
     override suspend fun getFavourites(): CharacterList {
-        return CharacterList(emptyList())
+        return mainDb.dao.getFavouriteCharacters().toCharacterList()
     }
 
     override suspend fun insertFavorite(characterListItem: CharacterListItem) {
@@ -81,6 +85,12 @@ class CharactersRepositoryImpl @Inject constructor(
             name = this.name,
             image = this.image,
             isFav = this.isFav
+        )
+    }
+
+    private fun List<Character>.toCharacterList(): CharacterList {
+        return CharacterList(
+            results = this.map { it.toCharacterListItem() }
         )
     }
 

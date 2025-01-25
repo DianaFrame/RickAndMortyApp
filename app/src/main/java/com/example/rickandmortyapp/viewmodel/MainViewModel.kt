@@ -8,8 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.CharacterListItem
 import com.example.domain.usecases.DeleteFavouriteUseCase
+import com.example.domain.usecases.GetAllCharactersUseCase
 import com.example.domain.usecases.GetCharacterDetailsUseCase
-import com.example.domain.usecases.GetCharacterListUseCase
+import com.example.domain.usecases.InsertCharactersIntoDbUseCase
 import com.example.domain.usecases.GetFavouriteUseCase
 import com.example.domain.usecases.GetSearchCharacterListUseCase
 import com.example.domain.usecases.InsertFavouriteUseCase
@@ -24,12 +25,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCharacterListUseCase: GetCharacterListUseCase,
+    private val insertCharactersIntoDbUseCase: InsertCharactersIntoDbUseCase,
     private val getSearchCharacterListUseCase: GetSearchCharacterListUseCase,
     private val getCharacterDetailsUseCase: GetCharacterDetailsUseCase,
     private val getFavouriteUseCase: GetFavouriteUseCase,
     private val insertFavouriteUseCase: InsertFavouriteUseCase,
-    private val deleteFavouriteUseCase: DeleteFavouriteUseCase
+    private val deleteFavouriteUseCase: DeleteFavouriteUseCase,
+    private val getAllCharactersUseCase: GetAllCharactersUseCase
 ) : ViewModel() {
     var state by mutableStateOf(State())
         private set
@@ -68,6 +70,10 @@ class MainViewModel @Inject constructor(
 
             is Event.DeleteFavourite -> {
                 deleteFavourite(event.characterListItem)
+            }
+
+            is Event.GetFavouriteCharacters -> {
+                getFavouriteList()
             }
 
 
@@ -114,8 +120,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 this@MainViewModel.state = state.copy(isLoading = true)
-                val newCharacters = getCharacterListUseCase.execute(currentPage)
-                _characters.value += newCharacters?.results.orEmpty()
+                insertCharactersIntoDbUseCase.execute(currentPage)
+                this@MainViewModel.state = state.copy(isLoading = false)
+                val newCharacters = getAllCharactersUseCase.execute()
+                Log.i("MyLog1", newCharacters.toString())
+                _characters.value = newCharacters?.results.orEmpty()
                 currentPage++
             } catch (e: Exception) {
                 Log.e("MyLog", "error")

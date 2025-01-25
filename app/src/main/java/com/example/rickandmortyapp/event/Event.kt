@@ -9,4 +9,5 @@ sealed interface Event {
     data class GetDetailsById(val id: Int) : Event
     data class InsertFavourite(val characterListItem: CharacterListItem) : Event
     data class DeleteFavourite(val characterListItem: CharacterListItem) : Event
+    data object GetFavouriteCharacters: Event
 }
