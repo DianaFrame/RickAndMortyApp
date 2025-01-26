@@ -14,6 +14,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.rickandmortyapp.navigation.Screen
 import com.example.rickandmortyapp.state.State
 import com.example.rickandmortyapp.viewmodel.MainViewModel
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -26,25 +27,27 @@ fun LoadingScreen(
         onNavigateTo = onNavigateTo,
     )
 }
+
 @Composable
 fun LoadingView(
     onNavigateTo: (Screen) -> Unit = {},
     state: State = State(),
-){
+) {
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.Asset("load_morty_flex.json")
     )
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
-        ) {
+    ) {
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever
         )
     }
     LaunchedEffect(state.isLoading) {
-        if(!state.isLoading){
+        if (!state.isLoading) {
+            delay(3000)
             onNavigateTo(Screen.CharacterList)
         }
     }

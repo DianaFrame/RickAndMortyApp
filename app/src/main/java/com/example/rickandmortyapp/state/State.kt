@@ -7,4 +7,5 @@ data class State(
     val characterDetails: CharacterDetails? = null,
     val isLoading: Boolean = true,
     val error: String? = null,
+    val isFav: Boolean = false,
 )

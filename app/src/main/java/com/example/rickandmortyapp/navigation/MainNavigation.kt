@@ -10,6 +10,10 @@ import com.example.rickandmortyapp.screens.DetailsCharacterScreen
 import com.example.rickandmortyapp.screens.LoadingScreen
 import com.example.rickandmortyapp.viewmodel.MainViewModel
 import kotlinx.serialization.Serializable
+import androidx.compose.animation.*
+import androidx.navigation.compose.*
+
+
 
 sealed interface Screen {
 
@@ -30,6 +34,7 @@ fun MainNavigation(
     navHostController: NavHostController,
     viewModel: MainViewModel,
 ) {
+
     NavHost(
         modifier = Modifier,
         navController = navHostController,
@@ -37,7 +42,7 @@ fun MainNavigation(
     ) {
         composable<Screen.Loading> {
             LoadingScreen(onNavigateTo = { navigateTo ->
-                navHostController.navigate(navigateTo)
+                navHostController.navigate(navigateTo){}
             }, viewModel = viewModel)
         }
         composable<Screen.CharacterList> {

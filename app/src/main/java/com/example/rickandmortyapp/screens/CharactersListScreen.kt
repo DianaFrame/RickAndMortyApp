@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -82,7 +82,8 @@ fun CharactersListView(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = "Favorite"
+                        contentDescription = "Favorite",
+                        tint = if (state.isFav) Red80 else Gray80
                     )
                 }
             },
@@ -93,18 +94,26 @@ fun CharactersListView(
                 Text(text = "Введите запрос")
             }
         )
-        LazyVerticalGrid(GridCells.Fixed(3), modifier = Modifier.fillMaxSize()) {
-            items(characters) { character ->
+        LazyVerticalGrid(
+            GridCells.Fixed(3),
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            itemsIndexed(characters) { index, character ->
+                if (index >= characters.size - 5
+                    && !state.isLoading
+                    && !state.isFav
+                    && state.query.trim() == ""
+                ) {
+                    viewModel.loadNextPage()
+
+                }
                 ListItem(character, onEvent) {
                     onNavigateTo(Screen.DetailsCharacter)
                 }
+
             }
-//            item {
-//                LaunchedEffect(Unit) {
-//                    viewModel.loadNextPage()
-//                }
-//            }
         }
+
     }
 
 
