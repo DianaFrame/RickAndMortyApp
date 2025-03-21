@@ -3,11 +3,9 @@ package com.example.data
 import com.example.data.api.CharactersApi
 import com.example.data.db.MainDb
 import com.example.data.models.Character
-import com.example.data.models.Characters
 import com.example.data.models.Details
 import com.example.domain.CharactersRepository
 import com.example.domain.models.CharacterDetails
-import com.example.domain.models.CharacterList
 import com.example.domain.models.CharacterListItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -24,9 +22,8 @@ class CharactersRepositoryImpl @Inject constructor(
         val characters = api
             .getAllCharacters(page)
             .body()
-            ?.toCharacterList()
         characters?.results?.forEach { character ->
-            mainDb.dao.insertCharacter(character.toCharacter())
+            mainDb.dao.insertCharacter(character)
         }
     }
 
@@ -55,10 +52,6 @@ class CharactersRepositoryImpl @Inject constructor(
 
     override suspend fun deleteFavorite(characterListItem: CharacterListItem) {
         mainDb.dao.deleteCharacter(characterListItem.toCharacter())
-    }
-
-    private fun Characters.toCharacterList(): CharacterList {
-        return CharacterList(results = this.results.map { it.toCharacterListItem() })
     }
 
     private fun Character.toCharacterListItem(): CharacterListItem {

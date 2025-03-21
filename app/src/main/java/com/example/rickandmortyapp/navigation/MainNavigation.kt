@@ -10,9 +10,6 @@ import com.example.rickandmortyapp.screens.DetailsCharacterScreen
 import com.example.rickandmortyapp.screens.LoadingScreen
 import com.example.rickandmortyapp.viewmodel.MainViewModel
 import kotlinx.serialization.Serializable
-import androidx.compose.animation.*
-import androidx.navigation.compose.*
-
 
 
 sealed interface Screen {

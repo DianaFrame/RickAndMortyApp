@@ -1,7 +1,6 @@
 package com.example.domain
 
 import com.example.domain.models.CharacterDetails
-import com.example.domain.models.CharacterList
 import com.example.domain.models.CharacterListItem
 import kotlinx.coroutines.flow.Flow
 

@@ -1,6 +1,5 @@
 package com.example.rickandmortyapp.event
 
-import com.example.data.models.Character
 import com.example.domain.models.CharacterListItem
 
 sealed interface Event {
