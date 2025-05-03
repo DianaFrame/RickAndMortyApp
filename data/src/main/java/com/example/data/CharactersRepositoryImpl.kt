@@ -34,15 +34,15 @@ class CharactersRepositoryImpl @Inject constructor(
             ?.toCharacterDetails()
     }
 
-    override suspend fun getSearchListByName(name: String): Flow<List<CharacterListItem>> {
+    override fun getSearchListByName(name: String): Flow<List<CharacterListItem>> {
         return mainDb.dao.searchCharactersByName(query = name).map { it.toListCharacterListItem() }
     }
 
-    override suspend fun getList(): Flow<List<CharacterListItem>> {
+    override fun getList(): Flow<List<CharacterListItem>> {
         return mainDb.dao.getAllCharacters().map { it.toListCharacterListItem() }
     }
 
-    override suspend fun getFavourites(): Flow<List<CharacterListItem>> {
+    override fun getFavourites(): Flow<List<CharacterListItem>> {
         return mainDb.dao.getFavouriteCharacters().map { it.toListCharacterListItem() }
     }
 

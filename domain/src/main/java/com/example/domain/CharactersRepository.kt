@@ -10,11 +10,11 @@ interface CharactersRepository {
 
     suspend fun getDetailsById(id: Int): CharacterDetails?
 
-    suspend fun getSearchListByName(name: String): Flow<List<CharacterListItem>>
+    fun getSearchListByName(name: String): Flow<List<CharacterListItem>>
 
-    suspend fun getList(): Flow<List<CharacterListItem>>
+    fun getList(): Flow<List<CharacterListItem>>
 
-    suspend fun getFavourites(): Flow<List<CharacterListItem>>
+    fun getFavourites(): Flow<List<CharacterListItem>>
 
     suspend fun insertFavorite(characterListItem: CharacterListItem)
 
